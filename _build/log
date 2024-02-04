@@ -1,23 +1,5 @@
-# dune exec jq .[quotes]
+# dune promote
 # OCAMLPARAM: unset
 # Shared cache: disabled
 # Shared cache location: /Users/granthihn/.cache/dune/db
 # Workspace root: /Users/granthihn/Documents/ocaml/cc_coding_challeges/jq
-# Auto-detected concurrency: 8
-# Dune context:
-#  { name = "default"
-#  ; kind = "default"
-#  ; profile = Dev
-#  ; merlin = true
-#  ; fdo_target_exe = None
-#  ; build_dir = In_build_dir "default"
-#  ; installed_env =
-#      map
-#        { "INSIDE_DUNE" :
-#            "/Users/granthihn/Documents/ocaml/cc_coding_challeges/jq/_build/default"
-#        ; "OCAML_COLOR" : "always"
-#        ; "OPAMCOLOR" : "always"
-#        }
-#  ; instrument_with = []
-#  }
-$ /Users/granthihn/.opam/default/bin/ocamlc.opt -config > /var/folders/2c/rjq2x8kx27z8gfk83c11g0hh0000gn/T/dune_72dfb4_output
