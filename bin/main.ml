@@ -24,6 +24,42 @@ let is_integer str =
     true
   with Failure _ -> false
 
+let print_json_object_index index json =
+  let keys = keys json in
+  List.iter
+    (fun key ->
+      let value = json |> member key in
+      Printf.printf "%s:\n" key;
+      match value with
+      | `List values ->
+          if index < List.length values then
+            Printf.printf "%s\n" (format_json (List.nth values index))
+          else Printf.printf "Index out of bounds\n"
+      | _ -> Printf.printf "%s\n" (format_json value))
+    keys;
+  flush stdout
+
+let print_json_objects_of_key key json =
+  let value = json |> member key in
+  Printf.printf "%s:\n" key;
+  Printf.printf "%s\n" (format_json value);
+  flush stdout
+
+let print_all_json_objects json =
+  let keys = keys json in
+  List.iter
+    (fun key ->
+      let value = json |> member key in
+      Printf.printf "%s:\n" key;
+      match value with
+      | `List values ->
+          List.iter
+            (fun value -> Printf.printf "%s\n" (format_json value))
+            values
+      | _ -> Printf.printf "%s\n" (format_json value))
+    keys;
+  flush stdout
+
 let () =
   let args = Sys.argv in
   Printf.printf "Args: %s\n" (String.concat ", " (Array.to_list args));
@@ -40,20 +76,7 @@ let () =
          Printf.printf "Invalid index: %s\n" index_str;
          exit 1);
       let json = Yojson.Basic.from_channel stdin in
-      let keys = keys json in
-      List.iter
-        (fun key ->
-          let value = json |> member key in
-          Printf.printf "%s:\n" key;
-          match value with
-          | `List values ->
-              let index = int_of_string index_str in
-              if index < List.length values then
-                Printf.printf "%s\n" (format_json (List.nth values index))
-              else Printf.printf "Index out of bounds\n"
-          | _ -> Printf.printf "%s\n" (format_json value))
-        keys;
-      flush stdout
+      print_json_object_index (int_of_string index_str) json
   (* Case print the json objects of the arg specified key .[key] *)
   | [| _; arg |]
     when String.length arg > 3
@@ -62,24 +85,9 @@ let () =
       let key_str = String.sub arg 2 (String.length arg - 3) in
       Printf.printf "Key: %s\n" key_str;
       let json = Yojson.Basic.from_channel stdin in
-      let value = json |> member key_str in
-      Printf.printf "%s:\n" key_str;
-      Printf.printf "%s\n" (format_json value);
-      flush stdout
+      print_json_objects_of_key key_str json
   (* Case print all *)
   | [| _; "." |] ->
       let json = Yojson.Basic.from_channel stdin in
-      let keys = keys json in
-      List.iter
-        (fun key ->
-          let value = json |> member key in
-          Printf.printf "%s:\n" key;
-          match value with
-          | `List values ->
-              List.iter
-                (fun value -> Printf.printf "%s\n" (format_json value))
-                values
-          | _ -> Printf.printf "%s\n" (format_json value))
-        keys;
-      flush stdout
+      print_all_json_objects json
   | _ -> failwith "Unsupported arguments"
